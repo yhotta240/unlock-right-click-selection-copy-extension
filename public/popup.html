@@ -165,13 +165,25 @@
             <div class="accordion-body p-3">
               <p class="my-1 fw-bold">説明:</p>
               <p>
-                このChrome拡張機能を使えば，○○できます．
+                このChrome拡張機能を使えば，ウェブページ上の右クリック制限，テキスト選択制限，コピー制限を簡単に解除できます．
               </p>
               <p class="my-1 fw-bold">拡張機能の主な特徴:</p>
               <div class="mt-1">
                 <ol>
                   <li class="mb-2">
-                    特徴をここに書く
+                    <strong>右クリック制限解除:</strong> 右クリックメニューの表示が制限されているページでも，自由にコンテキストメニューを開けます．
+                  </li>
+                  <li class="mb-2">
+                    <strong>選択制限解除:</strong> テキストの選択が無効化されているページでも，文章を自由に選択できるようになります．
+                  </li>
+                  <li class="mb-2">
+                    <strong>コピー制限解除:</strong> コピー操作が制限されているページでも，テキストをコピーできるようになります．
+                  </li>
+                  <li class="mb-2">
+                    <strong>軽量・高速:</strong> シンプルな設計で，ブラウザの動作に影響を与えません．
+                  </li>
+                  <li class="mb-2">
+                    <strong>簡単操作:</strong> 複雑な設定は不要で，トグルスイッチのON/OFFで即座に有効化・無効化できます．
                   </li>
                 </ol>
               </div>
@@ -179,7 +191,13 @@
               <div class="mt-1">
                 <ol>
                   <li class="mb-2">
-                    注意点を書く
+                    著作権保護のために制限されているコンテンツもあります．適切な用途でのみご使用ください．
+                  </li>
+                  <li class="mb-2">
+                    一部のウェブサイトでは，JavaScriptの実装方法により完全に制限を解除できない場合があります．
+                  </li>
+                  <li class="mb-2">
+                    ページを開いた後に拡張機能を有効化した場合，ページの再読み込みが必要になる場合があります．
                   </li>
                 </ol>
               </div>
@@ -198,39 +216,45 @@
           <div id="doc-tutorial" class="accordion-collapse collapse" data-bs-parent="#accordion">
             <div class="accordion-body p-3">
               <p class="mb-1 fw-bold">
-                拡張機能を有効にする
+                1. 拡張機能を開く
               </p>
               <ol>
                 <li>PCで Chrome を開きます．</li>
-                <li>右上の [拡張機能] <img
-                    src="https://storage.googleapis.com/support-kms-prod/pPIeCzvFrMFIBxrrrWuHfxU58Rx9xBLyyv7F"
-                    alt="拡張機能" height="18"> を選択します．</li>
-                <li>「Sample - サンプル」を選択します．（固定を指定しておくと，常に表示されます）</li>
+                <li>右上の [拡張機能]
+                  <img src="https://storage.googleapis.com/support-kms-prod/pPIeCzvFrMFIBxrrrWuHfxU58Rx9xBLyyv7F"
+                    alt="拡張機能" height="18"> アイコンを選択します．
+                </li>
+                <li>「Unlock Right Click & Selection & Copy」を選択して，ポップアップを開きます．</li>
               </ol>
 
               <p class="mb-1 fw-bold">
-                Sampleを有効にする
+                2. 制限解除機能を有効にする
               </p>
               <ul class="m-1">
-                <li>拡張機能のポップアップを開き，「Sampleを有効にする」のトグルボタンをクリック
-                  <div>無効にする場合も同じ操作を行ってください．</div>
+                <li class="mb-2"><strong>右クリック制限を解除する:</strong> 「右クリック制限を解除する」のトグルスイッチをONにすると，開いているすべてのタブで右クリックが可能になります．
                 </li>
+                <li class="mb-2"><strong>選択制限を解除する:</strong> 「選択制限を解除する」のトグルスイッチをONにすると，テキスト選択が可能になります．</li>
+                <li class="mb-2"><strong>コピー制限を解除する:</strong> 「コピー制限を解除する」のトグルスイッチをONにすると，テキストのコピーが可能になります．</li>
+                <li class="mb-2">無効にする場合は，同じトグルスイッチをOFFにしてください．</li>
               </ul>
 
               <p class="mb-1 fw-bold">
-                設定
+                3. 使用方法
               </p>
-              <ul>
-                <li>
-                  設定をここに書く
-                </li>
-              </ul>
+              <ol>
+                <li class="mb-2">制限解除したい機能のトグルスイッチをONにします．</li>
+                <li class="mb-2">設定は現在開いているすべてのタブに即座に適用されます．</li>
+                <li class="mb-2">制限が解除されたページで，通常通り右クリック，テキスト選択，コピーができるようになります．</li>
+                <li class="mb-2">もし動作しない場合は，ページを再読み込み（F5キー）してください．</li>
+              </ol>
 
               <p class="mb-1 fw-bold">
-                操作方法
+                4. トラブルシューティング
               </p>
               <ul>
-                <li>操作方法をここに書く</li>
+                <li class="mb-2"><strong>制限が解除されない場合:</strong> ページを再読み込みしてから，再度お試しください．</li>
+                <li class="mb-2"><strong>一部のサイトで動作しない場合:</strong> サイトのJavaScript実装により，完全に解除できない場合があります．</li>
+                <li class="mb-2"><strong>問題が解決しない場合:</strong> 「情報」タブの「問題を報告する」リンクからご連絡ください．</li>
               </ul>
             </div>
           </div>
