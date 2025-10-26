@@ -48,34 +48,21 @@ class PopupManager {
   }
 
   private addEventListeners(): void {
-    this.rightClickEnabledElement.addEventListener('change', (event) => {
-      this.settings.rightClickEnabled = (event.target as HTMLInputElement).checked;
-      this.saveSettingsAndReload(
-        this.settings.rightClickEnabled
-          ? '右クリック制限解除が有効になりました'
-          : '右クリック制限解除が無効になりました'
-      );
-    });
-
-    this.selectionEnabledElement.addEventListener('change', (event) => {
-      this.settings.selectionEnabled = (event.target as HTMLInputElement).checked;
-      this.saveSettingsAndReload(
-        this.settings.selectionEnabled
-          ? '選択制限解除が有効になりました'
-          : '選択制限解除が無効になりました'
-      );
-    });
-
-    this.copyEnabledElement.addEventListener('change', (event) => {
-      this.settings.copyEnabled = (event.target as HTMLInputElement).checked;
-      this.saveSettingsAndReload(
-        this.settings.copyEnabled
-          ? 'コピー制限解除が有効になりました'
-          : 'コピー制限解除が無効になりました'
-      );
-    });
+    this.addSettingChangeListener(this.rightClickEnabledElement, 'rightClickEnabled', '右クリック制限解除');
+    this.addSettingChangeListener(this.selectionEnabledElement, 'selectionEnabled', '選択制限解除');
+    this.addSettingChangeListener(this.copyEnabledElement, 'copyEnabled', 'コピー制限解除');
 
     this.initializeUI();
+  }
+
+  private addSettingChangeListener(element: HTMLInputElement, settingKey: keyof typeof this.settings, featureName: string): void {
+    element.addEventListener('change', (event) => {
+      const isChecked = (event.target as HTMLInputElement).checked;
+      this.settings[settingKey] = isChecked;
+      this.saveSettingsAndReload(
+        isChecked ? `${featureName}が有効になりました` : `${featureName}が無効になりました`
+      );
+    });
   }
 
   private saveSettingsAndReload(message: string): void {
@@ -115,16 +102,16 @@ class PopupManager {
     const extensionLink = document.getElementById('extension_link') as HTMLAnchorElement;
     if (extensionLink) {
       extensionLink.href = `chrome://extensions/?id=${chrome.runtime.id}`;
-      this.clickURL(extensionLink);
+      this.addTabCreateListener(extensionLink);
     }
 
-    this.clickURL(document.getElementById('issue-link'));
-    this.clickURL(document.getElementById('store_link'));
+    this.addTabCreateListener(document.getElementById('issue-link') as HTMLAnchorElement);
+    this.addTabCreateListener(document.getElementById('store_link') as HTMLAnchorElement);
 
     const githubLink = document.getElementById('github-link') as HTMLAnchorElement;
     githubLink.href = this.manifestMetadata.github_url;
     githubLink.textContent = this.manifestMetadata.github_url;
-    this.clickURL(githubLink);
+    this.addTabCreateListener(githubLink);
 
     const extensionId = document.getElementById('extension-id');
     if (extensionId) {
@@ -182,18 +169,14 @@ class PopupManager {
     developerName.textContent = developer;
   }
 
-  private clickURL(link: HTMLElement | string | null): void {
+  private addTabCreateListener(link: HTMLAnchorElement | null): void {
     if (!link) return;
 
-    const url = (link instanceof HTMLElement && link.hasAttribute('href')) ? (link as HTMLAnchorElement).href : (typeof link === 'string' ? link : null);
-    if (!url) return;
-
-    if (link instanceof HTMLElement) {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        chrome.tabs.create({ url });
-      });
-    }
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const url = link.href;
+      if (url) chrome.tabs.create({ url });
+    });
   }
 
   private showMessage(message: string, timestamp: string = this.dateTime()) {
