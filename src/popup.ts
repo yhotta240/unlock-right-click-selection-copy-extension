@@ -1,16 +1,22 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { PopupPanel } from './components/popup-panel';
+import { defaultSettings } from './settings';
 
 class PopupManager {
   private panel: PopupPanel;
-  private isEnabled: boolean = false;
-  private enabledElement: HTMLInputElement | null;
+  private settings = defaultSettings;
+  private rightClickEnabledElement: HTMLInputElement;
+  private selectionEnabledElement: HTMLInputElement;
+  private copyEnabledElement: HTMLInputElement;
   private manifestData: chrome.runtime.Manifest;
 
   constructor() {
     this.panel = new PopupPanel();
-    this.enabledElement = document.getElementById('enabled') as HTMLInputElement;
+    this.rightClickEnabledElement = document.getElementById('right-click-enabled') as HTMLInputElement;
+    this.selectionEnabledElement = document.getElementById('selection-enabled') as HTMLInputElement;
+    this.copyEnabledElement = document.getElementById('copy-enabled') as HTMLInputElement;
     this.manifestData = chrome.runtime.getManifest();
 
     this.loadInitialState();
@@ -18,27 +24,66 @@ class PopupManager {
   }
 
   private loadInitialState(): void {
-    chrome.storage.local.get(['settings', 'isEnabled'], (data) => {
-      if (this.enabledElement) {
-        this.isEnabled = data.isEnabled || false;
-        this.enabledElement.checked = this.isEnabled;
-      }
-      this.showMessage(this.isEnabled ? `${this.manifestData.name} は有効になっています` : `${this.manifestData.name} は無効になっています`);
+    chrome.storage.local.get(['settings'], (data) => {
+      this.settings = data.settings || defaultSettings;
+
+      this.rightClickEnabledElement.checked = this.settings.rightClickEnabled;
+      this.selectionEnabledElement.checked = this.settings.selectionEnabled;
+      this.copyEnabledElement.checked = this.settings.copyEnabled;
+
+      const messages = [];
+      if (this.settings.rightClickEnabled) messages.push('右クリック制限解除');
+      if (this.settings.selectionEnabled) messages.push('選択制限解除');
+      if (this.settings.copyEnabled) messages.push('コピー制限解除');
+
+      this.showMessage(
+        messages.length > 0
+          ? `${messages.join('、')}が有効です`
+          : 'すべての機能が無効です'
+      );
     });
   }
 
   private addEventListeners(): void {
-    if (this.enabledElement) {
-      this.enabledElement.addEventListener('change', (event) => {
-        this.isEnabled = (event.target as HTMLInputElement).checked;
-        chrome.storage.local.set({ isEnabled: this.isEnabled }, () => {
-          this.showMessage(this.isEnabled ? `${this.manifestData.name} は有効になっています` : `${this.manifestData.name} は無効になっています`);
-        });
-      });
-    }
+    this.rightClickEnabledElement.addEventListener('change', (event) => {
+      this.settings.rightClickEnabled = (event.target as HTMLInputElement).checked;
+      this.saveSettingsAndReload(
+        this.settings.rightClickEnabled
+          ? '右クリック制限解除が有効になりました'
+          : '右クリック制限解除が無効になりました'
+      );
+    });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      this.initializeUI();
+    this.selectionEnabledElement.addEventListener('change', (event) => {
+      this.settings.selectionEnabled = (event.target as HTMLInputElement).checked;
+      this.saveSettingsAndReload(
+        this.settings.selectionEnabled
+          ? '選択制限解除が有効になりました'
+          : '選択制限解除が無効になりました'
+      );
+    });
+
+    this.copyEnabledElement.addEventListener('change', (event) => {
+      this.settings.copyEnabled = (event.target as HTMLInputElement).checked;
+      this.saveSettingsAndReload(
+        this.settings.copyEnabled
+          ? 'コピー制限解除が有効になりました'
+          : 'コピー制限解除が無効になりました'
+      );
+    });
+
+    this.initializeUI();
+  }
+
+  private saveSettingsAndReload(message: string): void {
+    chrome.storage.local.set({ settings: this.settings }, () => {
+      this.showMessage(message);
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]?.id) {
+          chrome.tabs.reload(tabs[0].id);
+        }
+      });
     });
   }
 
@@ -49,11 +94,8 @@ class PopupManager {
     }
     const titleHeader = document.getElementById('title-header');
     if (titleHeader) {
-      titleHeader.textContent = this.manifestData.name;
-    }
-    const enabledLabel = document.getElementById('enabled-label');
-    if (enabledLabel) {
-      enabledLabel.textContent = `${this.manifestData.name} を有効にする`;
+      const shortName = this.manifestData.short_name || this.manifestData.name;
+      titleHeader.textContent = shortName;
     }
 
     const newTabButton = document.getElementById('new-tab-button');
@@ -163,4 +205,4 @@ class PopupManager {
   }
 }
 
-new PopupManager();
+document.addEventListener('DOMContentLoaded', () => new PopupManager());

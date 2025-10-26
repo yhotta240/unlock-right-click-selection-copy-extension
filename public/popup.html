@@ -28,14 +28,6 @@
     </div>
   </div>
 
-  <!-- ステータスの表示 -->
-  <div class="d-flex justify-content-between my-2 mx-1">
-    <label class="my-auto " for="enabled" id="enabled-label"></label>
-    <div class="form-check form-switch form-check-reverse me-3">
-      <input class="form-check-input" type="checkbox" role="switch" id="enabled">
-    </div>
-  </div>
-
   <!-- メニュータブ -->
   <ul class="nav nav-underline mb-2 mx-1" id="myTab" role="tablist">
     <li class="nav-item " role="presentation">
@@ -61,44 +53,84 @@
     <!-- 設定 -->
     <div class="tab-pane fade mt-3 mx-2 show active" id="settings" role="tabpanel" style="margin-bottom: 180px;"
       aria-labelledby="settings-tab">
-      <h5 class="">サンプル設定</h5>
-
-      <!-- =========================
-        サンプル設定エリア
-        ※ 実際のアプリ設定項目はここに追加していく
-      ========================== -->
-      <ul class="list-group list-group-flush">
-        <!-- ▼ テーマ選択：ライト／ダーク／システム自動 -->
-        <li class="list-group-item">
-          <div class="mb-3">
-            <label for="theme-select" class="form-label d-flex">テーマ：</label>
-            <select class="form-select" id="theme-select">
-              <option value="light">ライト</option>
-              <option value="dark">ダーク</option>
-              <option value="system">システム</option>
-            </select>
-          </div>
-        </li>
-
-        <!-- ▼ フォントサイズ設定 -->
-        <li class="list-group-item">
-          <div class="mb-3">
-            <label for="font-size" class="form-label d-flex">フォントサイズ：</label>
-            <input type="range" class="form-range" id="font-size" min="12" max="24" value="16">
-            <small class="text-muted">12〜24の範囲で調整可能</small>
-          </div>
-        </li>
-
-        <!-- ▼ 通知設定 -->
-        <li class="list-group-item">
-          <div class="form-check mb-2">
-            <input class="form-check-input" type="checkbox" id="enable-notifications">
-            <label class="form-check-label" for="enable-notifications">
-              通知を受け取る
+      <!-- 基本設定 -->
+      <h5 class="mb-2">基本設定</h5>
+      <small>現在開いているタブすべてに適用されます</small>
+      <div id="enabled-area" class="p-3 border rounded-3">
+        <div class="list-group list-group-flush">
+          <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <label class="form-check-label" for="right-click-enabled">
+              <i class="bi bi-mouse"></i>
+              右クリック制限を解除する
             </label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="right-click-enabled">
+            </div>
           </div>
-        </li>
-      </ul>
+          <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <label class="form-check-label" for="selection-enabled">
+              <i class="bi bi-textarea-t"></i>
+              選択制限を解除する
+            </label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="selection-enabled">
+            </div>
+          </div>
+          <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+            <label class="form-check-label" for="copy-enabled">
+              <i class="bi bi-clipboard-plus"></i>
+              コピー制限を解除する
+            </label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="copy-enabled">
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div id="custom-area" class="mt-4">
+        <!-- <h5 class="mb-2">カスタム設定</h5> -->
+        <!-- サイトを登録する -->
+        <!-- <div>
+          <label for="site-input" class="form-label">サイトを登録する</label>
+          <div class="d-flex gap-2 mb-3">
+            <div class="position-relative flex-grow-1">
+              <input type="text" class="form-control" id="site-input" placeholder="例: example.com">
+              <button type="button" id="clear-site-input"
+                class="btn-close position-absolute top-50 end-0 translate-middle-y me-2" aria-label="入力クリア"></button>
+            </div>
+            <button class="btn btn-outline-secondary" type="button" id="add-site-button"
+              style="white-space: nowrap;">追加</button>
+          </div>
+        </div> -->
+
+        <!-- サイト一覧 -->
+        <!-- <label for="custom-site-list" class="form-label">サイト一覧</label>
+        <div id="custom-site-list" class="list-group">
+          <div class="list-group-item d-flex justify-content-between align-items-center pe-1" title="google.com">
+            <div class="d-flex align-items-center text-truncate me-3 min-w-0">
+              <img src="https://www.google.com/s2/favicons?sz=64&domain=https://google.com" alt="アイコン" class="me-2"
+                style="width:16px; height:16px;">
+              <span class="text-truncate">google.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <div class="form-check form-switch" title="右クリック制限解除">
+                <i class="bi bi-mouse"></i>
+                <input class="form-check-input" type="checkbox" role="switch">
+              </div>
+              <div class="form-check form-switch" title="選択制限解除">
+                <i class="bi bi-textarea-t"></i>
+                <input class="form-check-input" type="checkbox" role="switch">
+              </div>
+              <div class="form-check form-switch" title="コピー制限解除">
+                <i class="bi bi-clipboard-plus"></i>
+                <input class="form-check-input" type="checkbox" role="switch">
+              </div>
+              <button type="button" class="btn-close" aria-label="削除" title="この設定を削除"></button>
+            </div>
+          </div>
+        </div> -->
+      </div>
     </div>
 
     <!-- 概要 -->
