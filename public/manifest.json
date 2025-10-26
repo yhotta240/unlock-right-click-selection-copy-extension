@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Unlock Right Click & Selection & Copy - 右クリック・選択・コピー制限解除",
   "short_name": "Unlock Right Click & Selection & Copy",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "右クリック・テキスト選択・コピーの制限を解除するChrome拡張機能",
   "icons": {
     "48": "icons/icon.png"
