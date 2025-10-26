@@ -3,7 +3,7 @@
   "name": "Unlock Right Click & Selection & Copy - 右クリック・選択・コピー制限解除",
   "short_name": "Unlock Right Click & Selection & Copy",
   "version": "0.1.0",
-  "description": "",
+  "description": "右クリック・テキスト選択・コピーの制限を解除するChrome拡張機能",
   "icons": {
     "48": "icons/icon.png"
   },

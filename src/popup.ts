@@ -3,6 +3,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { PopupPanel } from './components/popup-panel';
 import { defaultSettings } from './settings';
+import meta from '../public/manifest.meta.json';
 
 class PopupManager {
   private panel: PopupPanel;
@@ -11,6 +12,7 @@ class PopupManager {
   private selectionEnabledElement: HTMLInputElement;
   private copyEnabledElement: HTMLInputElement;
   private manifestData: chrome.runtime.Manifest;
+  private manifestMetadata: { [key: string]: any } = (meta as any) || {};
 
   constructor() {
     this.panel = new PopupPanel();
@@ -18,6 +20,7 @@ class PopupManager {
     this.selectionEnabledElement = document.getElementById('selection-enabled') as HTMLInputElement;
     this.copyEnabledElement = document.getElementById('copy-enabled') as HTMLInputElement;
     this.manifestData = chrome.runtime.getManifest();
+    this.manifestMetadata = (meta as any) || {};
 
     this.loadInitialState();
     this.addEventListeners();
@@ -38,7 +41,7 @@ class PopupManager {
 
       this.showMessage(
         messages.length > 0
-          ? `${messages.join('、')}が有効です`
+          ? `${messages.join('，')}が有効です`
           : 'すべての機能が無効です'
       );
     });
@@ -117,7 +120,11 @@ class PopupManager {
 
     this.clickURL(document.getElementById('issue-link'));
     this.clickURL(document.getElementById('store_link'));
-    this.clickURL(document.getElementById('github-link'));
+
+    const githubLink = document.getElementById('github-link') as HTMLAnchorElement;
+    githubLink.href = this.manifestMetadata.github_url;
+    githubLink.textContent = this.manifestMetadata.github_url;
+    this.clickURL(githubLink);
 
     const extensionId = document.getElementById('extension-id');
     if (extensionId) {
@@ -165,15 +172,14 @@ class PopupManager {
         incognitoEnabled.textContent = isAllowedAccess ? '有効' : '無効';
       }
     });
-  }
 
-  private saveSettings(datetime: string, message: string, value: any): void {
-    const settings = {
-      sampleValue: value,
-    };
-    chrome.storage.local.set({ settings: settings }, () => {
-      this.showMessage(message, datetime);
-    });
+    const publisherName = document.getElementById('publisher-name') as HTMLElement;
+    const publisher = this.manifestMetadata.publisher || '不明';
+    publisherName.textContent = publisher;
+
+    const developerName = document.getElementById('developer-name') as HTMLElement;
+    const developer = this.manifestMetadata.developer || '不明';
+    developerName.textContent = developer;
   }
 
   private clickURL(link: HTMLElement | string | null): void {
