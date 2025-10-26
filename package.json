@@ -6,13 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "publish": "npx ts-node scripts/publish.mts"
   },
   "keywords": [],
   "author": "yhotta240",
   "license": "MIT",
   "devDependencies": {
+    "@types/archiver": "^6.0.4",
     "@types/chrome": "^0.1.6",
+    "archiver": "^7.0.1",
+    "chrome-webstore-upload-cli": "^3.5.0",
     "copy-webpack-plugin": "^13.0.1",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
@@ -23,6 +27,8 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "css-loader": "^7.1.2",
-    "style-loader": "^4.0.0"
+    "dotenv": "^17.2.3",
+    "style-loader": "^4.0.0",
+    "ts-node": "^10.9.2"
   }
 }
