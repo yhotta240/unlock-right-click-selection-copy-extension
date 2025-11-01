@@ -21,7 +21,7 @@ function enableRightClick() {
     e.stopPropagation();
   }, true);
 
-  console.log('右クリック制限解除が有効化されました');
+  // console.log('右クリック制限解除が有効化されました');
 }
 
 // コピー制限を解除する
@@ -38,7 +38,7 @@ function enableCopy() {
     e.stopPropagation();
   }, true);
 
-  console.log('コピー制限解除が有効化されました');
+  // console.log('コピー制限解除が有効化されました');
 }
 
 // 選択制限を解除する
@@ -63,7 +63,7 @@ function enableSelection() {
     document.head.appendChild(styleElement);
   }
 
-  console.log('選択制限解除が有効化されました');
+  // console.log('選択制限解除が有効化されました');
 }
 
 // インラインイベントハンドラを無効化
@@ -200,6 +200,6 @@ document.addEventListener('click', (e) => {
       document.head.appendChild(styleElement);
     }
 
-    console.log(isTemporarilyDisabled ? '機能を一時的に無効化しました' : '機能を再度有効化しました');
+    // console.log(isTemporarilyDisabled ? '機能を一時的に無効化しました' : '機能を再度有効化しました');
   }
 }, true);

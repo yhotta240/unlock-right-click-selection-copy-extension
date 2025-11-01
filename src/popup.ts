@@ -99,6 +99,12 @@ class PopupManager {
   }
 
   private setupInfoTab(): void {
+    const storeLink = document.getElementById('store_link') as HTMLAnchorElement;
+    if (storeLink) {
+      storeLink.href = `https://chrome.google.com/webstore/detail/${chrome.runtime.id}`;
+      this.addTabCreateListener(storeLink);
+    }
+
     const extensionLink = document.getElementById('extension_link') as HTMLAnchorElement;
     if (extensionLink) {
       extensionLink.href = `chrome://extensions/?id=${chrome.runtime.id}`;
@@ -106,7 +112,6 @@ class PopupManager {
     }
 
     this.addTabCreateListener(document.getElementById('issue-link') as HTMLAnchorElement);
-    this.addTabCreateListener(document.getElementById('store_link') as HTMLAnchorElement);
 
     const githubLink = document.getElementById('github-link') as HTMLAnchorElement;
     githubLink.href = this.manifestMetadata.github_url;
