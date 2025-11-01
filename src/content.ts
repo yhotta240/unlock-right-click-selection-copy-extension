@@ -126,6 +126,16 @@ function startObserver() {
 // 機能を適用
 function applySettings(settings: Settings) {
   currentSettings = settings;
+  const customSites = settings?.options?.customSites || {};
+  const hostname = window.location.hostname;
+
+  // カスタムサイト設定が存在する場合は上書き
+  if (customSites[hostname]) {
+    const siteSettings = customSites[hostname];
+    settings.rightClickEnabled = siteSettings.rightClick ?? settings.rightClickEnabled;
+    settings.selectionEnabled = siteSettings.selection ?? settings.selectionEnabled;
+    settings.copyEnabled = siteSettings.copy ?? settings.copyEnabled;
+  }
 
   if (settings.rightClickEnabled) {
     enableRightClick();

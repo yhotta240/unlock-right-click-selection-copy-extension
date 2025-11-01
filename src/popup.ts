@@ -28,7 +28,7 @@ class PopupManager {
 
   private loadInitialState(): void {
     chrome.storage.local.get(['settings'], (data) => {
-      this.settings = data.settings || defaultSettings;
+      this.settings = data.settings ?? defaultSettings;
 
       this.rightClickEnabledElement.checked = this.settings.rightClickEnabled;
       this.selectionEnabledElement.checked = this.settings.selectionEnabled;
@@ -58,7 +58,7 @@ class PopupManager {
   private addSettingChangeListener(element: HTMLInputElement, settingKey: keyof typeof this.settings, featureName: string): void {
     element.addEventListener('change', (event) => {
       const isChecked = (event.target as HTMLInputElement).checked;
-      this.settings[settingKey] = isChecked;
+      (this.settings as any)[settingKey] = isChecked;
       this.saveSettingsAndReload(
         isChecked ? `${featureName}が有効になりました` : `${featureName}が無効になりました`
       );
@@ -95,7 +95,140 @@ class PopupManager {
       });
     }
 
+    this.setupCustomSites();
     this.setupInfoTab();
+  }
+
+  private setupCustomSites(): void {
+    const siteInput = document.getElementById('site-input') as HTMLInputElement;
+    const addSiteButton = document.getElementById('add-site-button') as HTMLButtonElement;
+
+    const loadCustomSiteList = (): void => {
+      chrome.storage.local.get(['settings'], (data) => {
+        const customSites = data.settings?.options?.customSites || {};
+        const customSiteList = document.getElementById('custom-site-list') as HTMLUListElement;
+        customSiteList.innerHTML = '';
+
+        Object.keys(customSites).forEach(siteUrl => {
+          const siteSettings = customSites[siteUrl];
+          createSiteListItem(siteUrl, siteSettings);
+        });
+      });
+    }
+
+    const addCustomSite = (hostname: string): void => {
+      chrome.storage.local.get(['settings'], (data) => {
+        const customSites = data.settings?.options?.customSites || {};
+
+        // もし既に存在する場合は追加しない
+        if (customSites[hostname]) {
+          this.showMessage(`${hostname} は既にカスタムサイトに登録されています`);
+          return;
+        }
+
+        // デフォルト設定
+        customSites[hostname] = { rightClick: false, selection: false, copy: false };
+
+        chrome.storage.local.set({ settings: data.settings }, () => {
+          createSiteListItem(hostname, customSites[hostname]);
+          this.showMessage(`${hostname} をカスタムサイトに追加しました`);
+        });
+      });
+    }
+
+    const createSiteListItem = (hostname: string, settings: any): void => {
+      const customSiteList = document.getElementById('custom-site-list') as HTMLUListElement;
+
+      const listItem = document.createElement('div');
+      listItem.className = 'list-group-item d-flex justify-content-between align-items-center pe-1';
+      listItem.title = hostname;
+
+      listItem.innerHTML = `
+        <div class="d-flex align-items-center text-truncate me-3 min-w-0">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=${hostname}" alt="アイコン" class="me-2" style="width:16px; height:16px;">
+          <span class="text-truncate">${hostname}</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-check" title="右クリック制限解除">
+            <i class="bi bi-mouse"></i>
+            <input class="form-check-input" type="checkbox" data-setting="rightClick" ${settings.rightClick ? 'checked' : ''} style="height: 16px; width: 16px;">
+          </div>
+          <div class="form-check" title="選択制限解除">
+            <i class="bi bi-textarea-t"></i>
+            <input class="form-check-input" type="checkbox" data-setting="selection" ${settings.selection ? 'checked' : ''} style="height: 16px; width: 16px;">
+          </div>
+          <div class="form-check" title="コピー制限解除">
+            <i class="bi bi-clipboard-plus"></i>
+            <input class="form-check-input" type="checkbox" data-setting="copy" ${settings.copy ? 'checked' : ''} style="height: 16px; width: 16px;">
+          </div>
+          <button type="button" class="btn-close" aria-label="削除" title="この設定を削除"></button>
+        </div>
+      `;
+
+      // チェックボックスのイベントリスナーを追加
+      const checkboxes = listItem.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+          const target = event.target as HTMLInputElement;
+          const settingKey = target.getAttribute('data-setting');
+          updateCustomSiteSetting(hostname, settingKey!, target.checked);
+        });
+      });
+
+      // 削除ボタンのイベントリスナーを追加
+      const deleteButton = listItem.querySelector('.btn-close');
+      deleteButton?.addEventListener('click', () => {
+        removeCustomSite(hostname, listItem);
+      });
+
+      customSiteList.appendChild(listItem);
+    }
+
+    const updateCustomSiteSetting = (hostname: string, settingKey: string, isEnabled: boolean): void => {
+      chrome.storage.local.get(['settings'], (data) => {
+        const customSites = data.settings?.options?.customSites || {};
+
+        if (customSites[hostname]) {
+          customSites[hostname][settingKey] = isEnabled;
+
+          chrome.storage.local.set({ settings: data.settings }, () => {
+            const featureName = settingKey === 'rightClick' ? '右クリック制限解除' :
+              settingKey === 'selection' ? '選択制限解除' : 'コピー制限解除';
+            this.showMessage(`${hostname}: ${featureName}が${isEnabled ? '有効' : '無効'}になりました`);
+          });
+        }
+      });
+    }
+
+    const removeCustomSite = (siteUrl: string, listItem: HTMLElement): void => {
+      chrome.storage.local.get(['settings'], (data) => {
+        const customSites = data.settings?.options?.customSites || {};
+
+        delete customSites[siteUrl];
+
+        chrome.storage.local.set({ settings: data.settings }, () => {
+          listItem.remove();
+          this.showMessage(`${siteUrl} をカスタムサイトから削除しました`);
+        });
+      });
+    }
+
+    // 初期ロード時にカスタムサイト一覧を表示
+    loadCustomSiteList();
+
+    addSiteButton.addEventListener('click', () => {
+      const siteUrl = siteInput.value.trim();
+      try {
+        const hostname = new URL(siteUrl).hostname;
+
+        if (siteUrl && hostname) {
+          addCustomSite(hostname);
+          siteInput.value = '';
+        }
+      } catch (error) {
+        this.showMessage('有効なURLを入力してください');
+      }
+    });
   }
 
   private setupInfoTab(): void {
